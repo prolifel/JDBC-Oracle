@@ -3,7 +3,8 @@ package uipath.java;
 import java.sql.*;
 import java.util.Properties;
 import java.io.*;
-
+import org.json.JSONArray;
+import org.json.JSONObject;
 public class Query {
     public String dbDriverClass, dbUrl, dbUsername, dbPassword;
     private Properties properties;
@@ -66,6 +67,47 @@ public class Query {
         }
     }
 
+    public static Connection uipathCreateConnection(String envPath) throws FileNotFoundException, IOException {
+        Query query;
+        Connection connection = null;
+        
+        query = new Query(envPath);
+
+        try {
+            connection = query.getConnection();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return connection;
+    }
+
+    public static JSONObject uipathSelectQuery(Connection connection) {
+        String query = "select * from regions";
+        JSONObject json = new JSONObject();
+
+        try {
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(query);
+            ResultSetMetaData resultSetMetaData = resultSet.getMetaData();
+
+            while (resultSet.next()) {
+                int numColumn = resultSetMetaData.getColumnCount();
+                JSONObject queryPerRow = new JSONObject();
+
+                for (int i = 1; i <= numColumn; i++) {
+                    String columnName = resultSetMetaData.getColumnName(i);
+                    queryPerRow.put(columnName, resultSet.getObject(columnName));
+                }
+                json.put(String.valueOf(resultSet.getRow()), queryPerRow);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();            
+        }
+
+        return json;
+    }
+
     public static void main(String[] args) throws SQLException {
         Query query;
         Connection connection = null;
@@ -84,7 +126,9 @@ public class Query {
             connection = query.getConnection();
 
             // create sql command here
-            Query.selectQuery(connection);
+            // Query.selectQuery(connection);
+
+            System.out.println(Query.uipathSelectQuery(connection));
         } catch (SQLException e) {
             e.printStackTrace();
         } catch (Exception e) {
