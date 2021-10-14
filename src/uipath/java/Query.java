@@ -106,8 +106,7 @@ public class Query {
         return connection;
     }
 
-    public static JSONObject uipathSelectQueryJSON(Connection connection) {
-        String query = "select * from regions";
+    public static JSONObject uipathSelectQueryJSON(Connection connection, String query) {
         JSONObject json = new JSONObject();
 
         try {
@@ -132,8 +131,7 @@ public class Query {
         return json;
     }
 
-    public static String uipathSelectQueryWebRowSet(Connection connection) throws SQLException {
-        String query = "select * from regions";
+    public static String uipathSelectQueryWebRowSet(Connection connection, String query) throws SQLException {
         WebRowSet webRS = new WebRowSetImpl();
         StringWriter sw = new StringWriter();
         webRS.setCommand(query);
@@ -158,8 +156,7 @@ public class Query {
         return sw.toString();
     }
 
-    public static String uipathSelectQueryDocument(Connection connection) throws ParserConfigurationException, SQLException {
-        String query = "select * from regions";
+    public static String uipathSelectQueryDocument(Connection connection, String query) throws ParserConfigurationException, SQLException {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = factory.newDocumentBuilder();
         Document doc = builder.newDocument();
@@ -238,7 +235,7 @@ public class Query {
 
             // System.out.println(Query.uipathSelectQueryJSON(connection));
             // Query.uipathSelectQueryWebRowSet(connection);
-            System.out.println(Query.uipathSelectQueryDocument(connection));
+            System.out.println(Query.uipathSelectQueryDocument(connection, "select * from regions"));
             // printDocument(Query.uipathSelectQueryDocument(connection), System.out);
         } catch (SQLException e) {
             e.printStackTrace();
